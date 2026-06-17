@@ -1,0 +1,421 @@
+/*
+ * QuantiScore – Estilos de interface
+ *
+ * Este arquivo define a identidade visual da aplicação, baseada em um esquema
+ * escuro com detalhes em verde para destacar elementos interativos. A tipografia
+ * simples e clara garante legibilidade, enquanto os componentes flexíveis
+ * permitem adaptação responsiva a diferentes tamanhos de tela.
+ */
+
+/* Variáveis de cor para fácil personalização */
+:root {
+    --color-primary: #00b050;
+    --color-secondary: #0c2340;
+    --color-bg: #081b33;
+    --color-surface: #11294c;
+    --color-text: #d0d8e8;
+    --color-muted: #7c8db0;
+    --color-danger: #e74c3c;
+    --border-radius: 8px;
+}
+
+/* Base */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    height: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+}
+
+a {
+    color: var(--color-primary);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+header {
+    background-color: var(--color-secondary);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+header .logo {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+header .logo h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--color-primary);
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 1.5rem;
+    margin: 0;
+}
+
+nav a {
+    color: var(--color-text);
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+nav a:hover {
+    color: var(--color-primary);
+}
+
+main {
+    padding: 0;
+}
+
+/* Page sections */
+.page {
+    display: none;
+    padding: 2rem;
+}
+
+.page.active {
+    display: block;
+}
+
+/* Home page */
+#home .hero {
+    position: relative;
+    height: 70vh;
+    background-image: url('2600b8aa-6099-4422-852c-2811f2a37cc9.png');
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+#home .hero .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(8, 27, 51, 0.75);
+}
+
+#home .hero .hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 700px;
+    padding: 1rem;
+}
+
+#home .hero h2 {
+    font-size: 2.2rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+#home .hero h2 span {
+    color: var(--color-primary);
+}
+
+#home .hero p {
+    font-size: 1.1rem;
+    color: var(--color-muted);
+    margin-bottom: 2rem;
+}
+
+#home .hero button {
+    background-color: var(--color-primary);
+    color: #ffffff;
+    border: none;
+    padding: 0.75rem 2rem;
+    font-size: 1rem;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+#home .hero button:hover {
+    background-color: #00a245;
+    transform: translateY(-2px);
+}
+
+/* Features */
+.features {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: -3rem;
+    padding: 2rem;
+}
+
+.feature-item {
+    background-color: var(--color-surface);
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    max-width: 300px;
+    flex: 1 1 250px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    text-align: center;
+}
+
+.feature-item h3 {
+    color: var(--color-primary);
+    margin-bottom: 0.75rem;
+}
+
+.feature-item p {
+    color: var(--color-muted);
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+/* Forms */
+form {
+    max-width: 900px;
+    margin: 0 auto;
+    background-color: var(--color-surface);
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+form h3 {
+    margin-top: 2rem;
+    margin-bottom: 0.5rem;
+    color: var(--color-primary);
+    font-size: 1.2rem;
+    font-weight: 600;
+    border-bottom: 1px solid var(--color-secondary);
+    padding-bottom: 0.25rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-weight: 500;
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group select {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid var(--color-secondary);
+    border-radius: var(--border-radius);
+    background-color: var(--color-bg);
+    color: var(--color-text);
+}
+
+.radio-group {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.25rem;
+}
+
+.radio-group label {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-weight: 400;
+}
+
+input[type="range"] {
+    width: 70%;
+}
+
+.two-col {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.three-col {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+output {
+    padding-left: 0.5rem;
+    color: var(--color-primary);
+    font-weight: 600;
+}
+
+.form-actions {
+    margin-top: 2rem;
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
+.form-actions button {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 30px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+#calculateBtn {
+    background-color: var(--color-primary);
+    color: #fff;
+}
+
+#calculateBtn:hover {
+    opacity: 0.85;
+}
+
+#cancelBtn {
+    background-color: var(--color-secondary);
+    color: var(--color-text);
+}
+
+#cancelBtn:hover {
+    opacity: 0.85;
+}
+
+/* Results */
+.panel {
+    background-color: var(--color-surface);
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    margin-bottom: 1.5rem;
+}
+
+.panel h3 {
+    margin-bottom: 1rem;
+    color: var(--color-primary);
+    font-weight: 600;
+    font-size: 1.2rem;
+    border-bottom: 1px solid var(--color-secondary);
+    padding-bottom: 0.25rem;
+}
+
+.charts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+/* Ajuste de dimensões para os elementos canvas nos gráficos */
+.charts canvas {
+    width: 100% !important;
+    height: 280px !important;
+}
+
+/* Sobreposição de valor no gráfico de confiança */
+.confidence-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    pointer-events: none;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.probabilities ul,
+.derived ul,
+.risks ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.probabilities li,
+.derived li,
+.risks li {
+    margin-bottom: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+}
+
+#finalVerdict {
+    line-height: 1.5;
+}
+
+#newAnalysisBtn {
+    margin-top: 2rem;
+    padding: 0.75rem 2rem;
+    background-color: var(--color-primary);
+    color: #fff;
+    border: none;
+    border-radius: 30px;
+    font-size: 1rem;
+    cursor: pointer;
+    display: block;
+    margin-left: auto;
+}
+
+#newAnalysisBtn:hover {
+    opacity: 0.85;
+}
+
+/* About and Contact */
+#about, #contact {
+    max-width: 800px;
+    margin: 0 auto;
+    font-size: 1rem;
+    line-height: 1.6;
+    background-color: var(--color-surface);
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+#about h2,
+#contact h2 {
+    color: var(--color-primary);
+    margin-bottom: 1rem;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 1rem;
+    font-size: 0.9rem;
+    color: var(--color-muted);
+    border-top: 1px solid var(--color-secondary);
+    background-color: var(--color-secondary);
+}
+
+@media (max-width: 600px) {
+    header nav ul {
+        gap: 0.8rem;
+    }
+    #home .hero h2 {
+        font-size: 1.6rem;
+    }
+    #home .hero p {
+        font-size: 0.9rem;
+    }
+}

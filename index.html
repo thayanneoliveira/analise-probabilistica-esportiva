@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuantiScore – Análise Probabilística Esportiva</title>
+    <!-- Primary color used by browsers to tint the UI on mobile devices -->
+    <meta name="theme-color" content="#00B050">
+    <link rel="stylesheet" href="style.css">
+    <!-- Progressive Web App manifest -->
+    <link rel="manifest" href="manifest.json">
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+    <!-- Chart.js for visualisations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="icon-192.png" alt="QuantiScore logo" width="40" height="40">
+            <h1>QuantiScore</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#home" data-nav>Início</a></li>
+                <li><a href="#analysis" data-nav>Nova Análise</a></li>
+                <li><a href="#about" data-nav>Metodologia</a></li>
+                <li><a href="#contact" data-nav>Contato</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <!-- Home / Landing Page -->
+        <section id="home" class="page active">
+            <div class="hero">
+                <div class="overlay"></div>
+                <div class="hero-content">
+                    <h2>Análise probabilística baseada em <span>dados</span>, não em palpites.</h2>
+                    <p>Utilize modelos estatísticos avançados, teoria dos jogos e dados confiáveis para estimar probabilidades reais e identificar valor no mercado.</p>
+                    <button id="startAnalysisBtn">Começar Análise</button>
+                </div>
+            </div>
+            <div class="features">
+                <div class="feature-item">
+                    <h3>Modelagem Quantitativa</h3>
+                    <p>Combinação de Poisson, ELO Rating, regressão e atualizações bayesianas para precificar partidas.</p>
+                </div>
+                <div class="feature-item">
+                    <h3>Transparência Total</h3>
+                    <p>Justificamos cada variável, atribuimos pesos e mostramos o grau de confiança nas previsões.</p>
+                </div>
+                <div class="feature-item">
+                    <h3>PWA Offline</h3>
+                    <p>Acesse suas análises onde estiver, mesmo sem conexão. O app funciona offline graças à tecnologia PWA.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Analysis Page -->
+        <section id="analysis" class="page">
+            <h2>Nova Análise</h2>
+            <form id="analysisForm">
+                <div class="form-group">
+                    <label for="teamA">Time A:</label>
+                    <input type="text" id="teamA" name="teamA" placeholder="Nome do Time A" required>
+                </div>
+                <div class="form-group">
+                    <label for="teamB">Time B:</label>
+                    <input type="text" id="teamB" name="teamB" placeholder="Nome do Time B" required>
+                </div>
+                <div class="form-group">
+                    <label>Mando de Campo:</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="homeTeam" value="A" checked> Time A (casa)</label>
+                        <label><input type="radio" name="homeTeam" value="B"> Time B (casa)</label>
+                    </div>
+                </div>
+                <h3>Força Ofensiva</h3>
+                <div class="two-col">
+                    <div class="form-group">
+                        <label for="attackA">Ataque Time A:</label>
+                        <select id="attackA" name="attackA">
+                            <option value="muito-forte">Muito Forte</option>
+                            <option value="forte">Forte</option>
+                            <option value="medio" selected>Médio</option>
+                            <option value="fraco">Fraco</option>
+                            <option value="muito-fraco">Muito Fraco</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="attackB">Ataque Time B:</label>
+                        <select id="attackB" name="attackB">
+                            <option value="muito-forte">Muito Forte</option>
+                            <option value="forte">Forte</option>
+                            <option value="medio" selected>Médio</option>
+                            <option value="fraco">Fraco</option>
+                            <option value="muito-fraco">Muito Fraco</option>
+                        </select>
+                    </div>
+                </div>
+                <h3>Força Defensiva</h3>
+                <div class="two-col">
+                    <div class="form-group">
+                        <label for="defenseA">Defesa Time A:</label>
+                        <select id="defenseA" name="defenseA">
+                            <option value="muito-forte">Muito Forte</option>
+                            <option value="forte">Forte</option>
+                            <option value="medio" selected>Médio</option>
+                            <option value="fraco">Fraco</option>
+                            <option value="muito-fraco">Muito Fraco</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="defenseB">Defesa Time B:</label>
+                        <select id="defenseB" name="defenseB">
+                            <option value="muito-forte">Muito Forte</option>
+                            <option value="forte">Forte</option>
+                            <option value="medio" selected>Médio</option>
+                            <option value="fraco">Fraco</option>
+                            <option value="muito-fraco">Muito Fraco</option>
+                        </select>
+                    </div>
+                </div>
+                <h3>Médias de Gols (por partida)</h3>
+                <div class="two-col">
+                    <div class="form-group">
+                        <label for="avgGoalsForA">Gols marcados - Time A:</label>
+                        <input type="number" id="avgGoalsForA" name="avgGoalsForA" step="0.01" min="0" value="1.5" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="avgGoalsAgainstA">Gols sofridos - Time A:</label>
+                        <input type="number" id="avgGoalsAgainstA" name="avgGoalsAgainstA" step="0.01" min="0" value="1.0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="avgGoalsForB">Gols marcados - Time B:</label>
+                        <input type="number" id="avgGoalsForB" name="avgGoalsForB" step="0.01" min="0" value="1.4" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="avgGoalsAgainstB">Gols sofridos - Time B:</label>
+                        <input type="number" id="avgGoalsAgainstB" name="avgGoalsAgainstB" step="0.01" min="0" value="1.2" required>
+                    </div>
+                </div>
+                <h3>Motivação (0–10)</h3>
+                <div class="two-col">
+                    <div class="form-group">
+                        <label for="motivationA">Motivação Time A:</label>
+                        <input type="range" id="motivationA" name="motivationA" min="0" max="10" value="5" oninput="this.nextElementSibling.value = this.value">
+                        <output>5</output>
+                    </div>
+                    <div class="form-group">
+                        <label for="motivationB">Motivação Time B:</label>
+                        <input type="range" id="motivationB" name="motivationB" min="0" max="10" value="5" oninput="this.nextElementSibling.value = this.value">
+                        <output>5</output>
+                    </div>
+                </div>
+                <h3>Fadiga (0–10)</h3>
+                <div class="two-col">
+                    <div class="form-group">
+                        <label for="fatigueA">Fadiga Time A:</label>
+                        <input type="range" id="fatigueA" name="fatigueA" min="0" max="10" value="3" oninput="this.nextElementSibling.value = this.value">
+                        <output>3</output>
+                    </div>
+                    <div class="form-group">
+                        <label for="fatigueB">Fadiga Time B:</label>
+                        <input type="range" id="fatigueB" name="fatigueB" min="0" max="10" value="3" oninput="this.nextElementSibling.value = this.value">
+                        <output>3</output>
+                    </div>
+                </div>
+                <h3>Impacto de Elenco</h3>
+                <div class="two-col">
+                    <div class="form-group">
+                        <label for="squadA">Impacto Time A:</label>
+                        <select id="squadA" name="squadA">
+                            <option value="muito-baixo">Muito Baixo</option>
+                            <option value="baixo">Baixo</option>
+                            <option value="medio" selected>Médio</option>
+                            <option value="alto">Alto</option>
+                            <option value="muito-alto">Muito Alto</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="squadB">Impacto Time B:</label>
+                        <select id="squadB" name="squadB">
+                            <option value="muito-baixo">Muito Baixo</option>
+                            <option value="baixo">Baixo</option>
+                            <option value="medio" selected>Médio</option>
+                            <option value="alto">Alto</option>
+                            <option value="muito-alto">Muito Alto</option>
+                        </select>
+                    </div>
+                </div>
+                <h3>Odds de Mercado (cotas decimais)</h3>
+                <div class="three-col">
+                    <div class="form-group">
+                        <label for="oddA">Vitória Time A:</label>
+                        <input type="number" id="oddA" name="oddA" step="0.01" min="1.0" value="2.0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="oddDraw">Empate:</label>
+                        <input type="number" id="oddDraw" name="oddDraw" step="0.01" min="1.0" value="3.5" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="oddB">Vitória Time B:</label>
+                        <input type="number" id="oddB" name="oddB" step="0.01" min="1.0" value="3.0" required>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" id="calculateBtn">Gerar Análise</button>
+                    <button type="button" id="cancelBtn">Cancelar</button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Result Page -->
+        <section id="result" class="page">
+            <h2>Resultado da Análise</h2>
+            <div id="executiveSummary" class="panel"></div>
+            <div class="charts">
+                <canvas id="probChart" width="350" height="350"></canvas>
+                <canvas id="scoreChart" width="350" height="350"></canvas>
+                <canvas id="confidenceChart" width="350" height="350"></canvas>
+            </div>
+            <div class="probabilities panel">
+                <h3>Probabilidades Principais</h3>
+                <ul id="mainProbs"></ul>
+            </div>
+            <div class="derived panel">
+                <h3>Mercados Derivados</h3>
+                <ul id="derivedList"></ul>
+            </div>
+            <div class="risks panel">
+                <h3>Fatores de Risco</h3>
+                <ul id="riskList"></ul>
+            </div>
+            <div class="verdict panel">
+                <h3>Veredito Final</h3>
+                <div id="finalVerdict"></div>
+            </div>
+            <button id="newAnalysisBtn">Nova Análise</button>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="page">
+            <h2>Metodologia</h2>
+            <p>Esta aplicação segue rigorosamente um processo de análise em dez etapas para estimar probabilidades reais em eventos esportivos. O algoritmo combina métricas de forma recente, forças ofensivas e defensivas, mando de campo, condições de elenco, fadiga, motivação, confronto tático, análise do mercado e modelagem matemática (ELO Rating, Distribuição de Poisson, Regressão e Bayes) para chegar a uma estimativa probabilística final.</p>
+            <p>O objetivo não é prever vencedores, mas identificar onde o mercado pode estar superestimando ou subestimando um resultado. Cada variável é considerada com peso específico e todas as incertezas são apresentadas de maneira transparente.</p>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="page">
+            <h2>Contato</h2>
+            <p>Tem dúvidas ou sugestões? Entre em contato pelo e‑mail <a href="mailto:contato@quantiscore.com">contato@quantiscore.com</a> ou acompanhe as atualizações em nossas redes sociais.</p>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; <span id="currentYear"></span> QuantiScore — Todos os direitos reservados.</p>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>
