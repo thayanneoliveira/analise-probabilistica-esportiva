@@ -60,6 +60,7 @@
         <section id="analysis" class="page">
             <h2>Nova Análise</h2>
             <form id="analysisForm">
+                <!-- Novos campos simplificados -->
                 <div class="form-group">
                     <label for="teamA">Time A:</label>
                     <input type="text" id="teamA" name="teamA" placeholder="Nome do Time A" required>
@@ -69,141 +70,21 @@
                     <input type="text" id="teamB" name="teamB" placeholder="Nome do Time B" required>
                 </div>
                 <div class="form-group">
-                    <label>Mando de Campo:</label>
-                    <div class="radio-group">
-                        <label><input type="radio" name="homeTeam" value="A" checked> Time A (casa)</label>
-                        <label><input type="radio" name="homeTeam" value="B"> Time B (casa)</label>
-                    </div>
+                    <label for="competition">Competição:</label>
+                    <input type="text" id="competition" name="competition" placeholder="Nome da competição (liga, copa etc.)" required>
                 </div>
-                <h3>Força Ofensiva</h3>
-                <div class="two-col">
-                    <div class="form-group">
-                        <label for="attackA">Ataque Time A:</label>
-                        <select id="attackA" name="attackA">
-                            <option value="muito-forte">Muito Forte</option>
-                            <option value="forte">Forte</option>
-                            <option value="medio" selected>Médio</option>
-                            <option value="fraco">Fraco</option>
-                            <option value="muito-fraco">Muito Fraco</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="attackB">Ataque Time B:</label>
-                        <select id="attackB" name="attackB">
-                            <option value="muito-forte">Muito Forte</option>
-                            <option value="forte">Forte</option>
-                            <option value="medio" selected>Médio</option>
-                            <option value="fraco">Fraco</option>
-                            <option value="muito-fraco">Muito Fraco</option>
-                        </select>
-                    </div>
+                <div class="form-group">
+                    <label for="matchDate">Data do Jogo:</label>
+                    <input type="date" id="matchDate" name="matchDate" required>
                 </div>
-                <h3>Força Defensiva</h3>
-                <div class="two-col">
-                    <div class="form-group">
-                        <label for="defenseA">Defesa Time A:</label>
-                        <select id="defenseA" name="defenseA">
-                            <option value="muito-forte">Muito Forte</option>
-                            <option value="forte">Forte</option>
-                            <option value="medio" selected>Médio</option>
-                            <option value="fraco">Fraco</option>
-                            <option value="muito-fraco">Muito Fraco</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="defenseB">Defesa Time B:</label>
-                        <select id="defenseB" name="defenseB">
-                            <option value="muito-forte">Muito Forte</option>
-                            <option value="forte">Forte</option>
-                            <option value="medio" selected>Médio</option>
-                            <option value="fraco">Fraco</option>
-                            <option value="muito-fraco">Muito Fraco</option>
-                        </select>
-                    </div>
-                </div>
-                <h3>Médias de Gols (por partida)</h3>
-                <div class="two-col">
-                    <div class="form-group">
-                        <label for="avgGoalsForA">Gols marcados - Time A:</label>
-                        <input type="number" id="avgGoalsForA" name="avgGoalsForA" step="0.01" min="0" value="1.5" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="avgGoalsAgainstA">Gols sofridos - Time A:</label>
-                        <input type="number" id="avgGoalsAgainstA" name="avgGoalsAgainstA" step="0.01" min="0" value="1.0" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="avgGoalsForB">Gols marcados - Time B:</label>
-                        <input type="number" id="avgGoalsForB" name="avgGoalsForB" step="0.01" min="0" value="1.4" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="avgGoalsAgainstB">Gols sofridos - Time B:</label>
-                        <input type="number" id="avgGoalsAgainstB" name="avgGoalsAgainstB" step="0.01" min="0" value="1.2" required>
-                    </div>
-                </div>
-                <h3>Motivação (0–10)</h3>
-                <div class="two-col">
-                    <div class="form-group">
-                        <label for="motivationA">Motivação Time A:</label>
-                        <input type="range" id="motivationA" name="motivationA" min="0" max="10" value="5" oninput="this.nextElementSibling.value = this.value">
-                        <output>5</output>
-                    </div>
-                    <div class="form-group">
-                        <label for="motivationB">Motivação Time B:</label>
-                        <input type="range" id="motivationB" name="motivationB" min="0" max="10" value="5" oninput="this.nextElementSibling.value = this.value">
-                        <output>5</output>
-                    </div>
-                </div>
-                <h3>Fadiga (0–10)</h3>
-                <div class="two-col">
-                    <div class="form-group">
-                        <label for="fatigueA">Fadiga Time A:</label>
-                        <input type="range" id="fatigueA" name="fatigueA" min="0" max="10" value="3" oninput="this.nextElementSibling.value = this.value">
-                        <output>3</output>
-                    </div>
-                    <div class="form-group">
-                        <label for="fatigueB">Fadiga Time B:</label>
-                        <input type="range" id="fatigueB" name="fatigueB" min="0" max="10" value="3" oninput="this.nextElementSibling.value = this.value">
-                        <output>3</output>
-                    </div>
-                </div>
-                <h3>Impacto de Elenco</h3>
-                <div class="two-col">
-                    <div class="form-group">
-                        <label for="squadA">Impacto Time A:</label>
-                        <select id="squadA" name="squadA">
-                            <option value="muito-baixo">Muito Baixo</option>
-                            <option value="baixo">Baixo</option>
-                            <option value="medio" selected>Médio</option>
-                            <option value="alto">Alto</option>
-                            <option value="muito-alto">Muito Alto</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="squadB">Impacto Time B:</label>
-                        <select id="squadB" name="squadB">
-                            <option value="muito-baixo">Muito Baixo</option>
-                            <option value="baixo">Baixo</option>
-                            <option value="medio" selected>Médio</option>
-                            <option value="alto">Alto</option>
-                            <option value="muito-alto">Muito Alto</option>
-                        </select>
-                    </div>
-                </div>
-                <h3>Odds de Mercado (cotas decimais)</h3>
-                <div class="three-col">
-                    <div class="form-group">
-                        <label for="oddA">Vitória Time A:</label>
-                        <input type="number" id="oddA" name="oddA" step="0.01" min="1.0" value="2.0" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="oddDraw">Empate:</label>
-                        <input type="number" id="oddDraw" name="oddDraw" step="0.01" min="1.0" value="3.5" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="oddB">Vitória Time B:</label>
-                        <input type="number" id="oddB" name="oddB" step="0.01" min="1.0" value="3.0" required>
-                    </div>
-                </div>
+                <!-- Opções de coleta automática de dados -->
+                <fieldset class="form-group">
+                    <legend>Opções de análise</legend>
+                    <label><input type="checkbox" id="autoStats" name="autoStats" checked> Consultar estatísticas automaticamente</label><br>
+                    <label><input type="checkbox" id="autoMarket" name="autoMarket" checked> Consultar mercado automaticamente</label><br>
+                    <label><input type="checkbox" id="autoClimate" name="autoClimate" checked> Consultar clima e ambientação</label><br>
+                    <label><input type="checkbox" id="autoModel" name="autoModel" checked> Executar modelo quantitativo completo</label>
+                </fieldset>
                 <div class="form-actions">
                     <button type="submit" id="calculateBtn">Gerar Análise</button>
                     <button type="button" id="cancelBtn">Cancelar</button>

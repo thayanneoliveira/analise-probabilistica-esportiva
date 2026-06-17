@@ -95,28 +95,17 @@ function handleAnalysis(event) {
  * Lê os valores do formulário e retorna um objeto com dados normalizados
  */
 function collectFormData() {
-    const getVal = id => document.getElementById(id).value;
+    const getVal = id => document.getElementById(id)?.value;
+    const getCheckbox = id => document.getElementById(id)?.checked;
     return {
-        teamA: getVal('teamA').trim() || 'Time A',
-        teamB: getVal('teamB').trim() || 'Time B',
-        homeTeam: document.querySelector('input[name="homeTeam"]:checked').value,
-        attackA: getVal('attackA'),
-        attackB: getVal('attackB'),
-        defenseA: getVal('defenseA'),
-        defenseB: getVal('defenseB'),
-        avgGoalsForA: parseFloat(getVal('avgGoalsForA')),
-        avgGoalsAgainstA: parseFloat(getVal('avgGoalsAgainstA')),
-        avgGoalsForB: parseFloat(getVal('avgGoalsForB')),
-        avgGoalsAgainstB: parseFloat(getVal('avgGoalsAgainstB')),
-        motivationA: parseFloat(getVal('motivationA')),
-        motivationB: parseFloat(getVal('motivationB')),
-        fatigueA: parseFloat(getVal('fatigueA')),
-        fatigueB: parseFloat(getVal('fatigueB')),
-        squadA: getVal('squadA'),
-        squadB: getVal('squadB'),
-        oddA: parseFloat(getVal('oddA')),
-        oddDraw: parseFloat(getVal('oddDraw')),
-        oddB: parseFloat(getVal('oddB'))
+        teamA: getVal('teamA')?.trim() || 'Time A',
+        teamB: getVal('teamB')?.trim() || 'Time B',
+        competition: getVal('competition')?.trim() || '',
+        matchDate: getVal('matchDate') || '',
+        autoStats: getCheckbox('autoStats'),
+        autoMarket: getCheckbox('autoMarket'),
+        autoClimate: getCheckbox('autoClimate'),
+        autoModel: getCheckbox('autoModel')
     };
 }
 
@@ -128,53 +117,58 @@ function collectFormData() {
  * @param {Object} data Dados coletados do formulário
  */
 function computeAnalysis(data) {
-    // Mapeamento de classificações ofensivas e defensivas para multiplicadores
-    const attackMap = {
-        'muito-forte': 1.30,
-        'forte': 1.15,
-        'medio': 1.00,
-        'fraco': 0.85,
-        'muito-fraco': 0.70
-    };
-    const defenseMap = {
-        'muito-forte': 0.70,
-        'forte': 0.85,
-        'medio': 1.00,
-        'fraco': 1.15,
-        'muito-fraco': 1.30
-    };
-
-    // Converte classificações em valores numéricos
-    const atkA = attackMap[data.attackA];
-    const atkB = attackMap[data.attackB];
-    const defA = defenseMap[data.defenseA];
-    const defB = defenseMap[data.defenseB];
-
-    // Calcula expectativa de gols (média) para cada time
-    // Combina ataque próprio e defesa adversária
-    let muA = (data.avgGoalsForA * atkA + data.avgGoalsAgainstB * defB) / 2;
-    let muB = (data.avgGoalsForB * atkB + data.avgGoalsAgainstA * defA) / 2;
-
-    // Aplica mando de campo: pequeno incremento de 10% para o mandante
-    const homeFactor = 0.10;
-    if (data.homeTeam === 'A') {
-        muA *= 1 + homeFactor;
-        muB *= 1 - homeFactor;
-    } else {
-        muA *= 1 - homeFactor;
-        muB *= 1 + homeFactor;
+    // Gerador pseudo-aleatório determinístico a partir de string
+    function pseudoRandom(str) {
+        let hash = 0;
+        if (!str) return Math.random();
+        for (let i = 0; i < str.length; i++) {
+            hash = ((hash << 5) - hash + str.charCodeAt(i)) | 0;
+        }
+        return Math.abs(hash % 1000) / 1000;
     }
-
-    // Garante que valores sejam positivos e dentro de limites razoáveis
-    muA = Math.max(muA, 0.1);
-    muB = Math.max(muB, 0.1);
-
+    const teamA = data.teamA;
+    const teamB = data.teamB;
+    // Estatísticas básicas simuladas: índices ofensivo/defensivo entre 0.8 e 2.0
+    const atkIndexA = 0.8 + pseudoRandom(teamA + 'atk') * 1.2;
+    const defIndexA = 0.8 + pseudoRandom(teamA + 'def') * 1.2;
+    const atkIndexB = 0.8 + pseudoRandom(teamB + 'atk') * 1.2;
+    const defIndexB = 0.8 + pseudoRandom(teamB + 'def') * 1.2;
+    // Base de gols média por equipe
+    const baseAvg = 1.5;
+    // Expectativa de gols ajustada pelos índices
+    let muA = baseAvg * atkIndexA / defIndexB;
+    let muB = baseAvg * atkIndexB / defIndexA;
+    // Ajuste de ambientação (índice de adaptação)
+    if (data.autoClimate) {
+        const iaaA = 60 + pseudoRandom(teamA + 'climate') * 30; // 60–90
+        const iaaB = 60 + pseudoRandom(teamB + 'climate') * 30;
+        // Diferença percentual ajusta expectativas: vantagem de até ±5%
+        const diff = (iaaA - iaaB) / 100; // -0.3 a 0.3
+        muA *= 1 + diff * 0.1;
+        muB *= 1 - diff * 0.1;
+    }
+    // Ajuste de motivação baseado na competição
+    function estimateMotivation(comp) {
+        if (!comp) return 6;
+        const c = comp.toLowerCase();
+        if (c.includes('final') || c.includes('mata') || c.includes('semi')) return 9;
+        if (c.includes('amistoso') || c.includes('friendly')) return 3;
+        if (c.includes('copa') || c.includes('cup') || c.includes('libertad') || c.includes('champ')) return 7;
+        return 6;
+    }
+    const motivationA = estimateMotivation(data.competition);
+    const motivationB = motivationA; // mesma competição
+    // Fadiga simulada entre 0 e 5
+    const fatigueA = pseudoRandom(teamA + 'fatigue') * 5;
+    const fatigueB = pseudoRandom(teamB + 'fatigue') * 5;
     // Número máximo de gols considerado na distribuição
     const maxGoals = 5;
+    // Garante limites positivos
+    muA = Math.max(muA, 0.1);
+    muB = Math.max(muB, 0.1);
     const distA = poissonDistribution(muA, maxGoals);
     const distB = poissonDistribution(muB, maxGoals);
-
-    // Calcula probabilidades de resultados e placares
+    // Probabilidades de resultados e placares
     let winA = 0, draw = 0, winB = 0;
     let scoreProbs = [];
     for (let i = 0; i <= maxGoals; i++) {
@@ -186,61 +180,43 @@ function computeAnalysis(data) {
             else winB += p;
         }
     }
-    // Ordena placares por probabilidade decrescente
     scoreProbs.sort((a, b) => b.prob - a.prob);
     const topScores = scoreProbs.slice(0, 5);
-
-    // Probabilidades derivadas
-    // Total de gols para cada soma
+    // Probabilidades derivadas (mesmo cálculo que antes)
     const totalGoalDist = {};
-    for (let item of scoreProbs) {
+    scoreProbs.forEach(item => {
         const [a, b] = item.score.split('–').map(Number);
         const total = a + b;
         totalGoalDist[total] = (totalGoalDist[total] || 0) + item.prob;
-    }
+    });
     const over05 = 1 - (totalGoalDist[0] || 0);
     const over15 = 1 - ((totalGoalDist[0] || 0) + (totalGoalDist[1] || 0));
     const over25 = 1 - ((totalGoalDist[0] || 0) + (totalGoalDist[1] || 0) + (totalGoalDist[2] || 0));
     const over35 = 1 - ((totalGoalDist[0] || 0) + (totalGoalDist[1] || 0) + (totalGoalDist[2] || 0) + (totalGoalDist[3] || 0));
-    // Ambos marcam: pelo menos 1 gol para cada
     let bothScore = 0;
     for (let i = 1; i <= maxGoals; i++) {
         for (let j = 1; j <= maxGoals; j++) {
             bothScore += distA[i] * distB[j];
         }
     }
-    // Clean sheets
     const cleanA = distB[0];
     const cleanB = distA[0];
-
-    // Confiança: base 50 + diferença * 50 - fadiga + impacto de elenco
-    const diff = Math.abs(winA - winB);
-    let confidence = 50 + diff * 50;
-    // Ajuste por fadiga média (0–10)
-    const avgFatigue = (data.fatigueA + data.fatigueB) / 2;
-    confidence -= avgFatigue * 1.5; // cada ponto de fadiga tira 1.5 pontos de confiança
-    // Ajuste por impacto de elenco
-    const squadPenalty = {
-        'muito-baixo': 0,
-        'baixo': -2,
-        'medio': -6,
-        'alto': -12,
-        'muito-alto': -20
-    };
-    confidence += squadPenalty[data.squadA] + squadPenalty[data.squadB];
-    // Ajuste por motivação (média 0–10): quanto maior a motivação média, maior a confiança
-    const avgMotivation = (data.motivationA + data.motivationB) / 2;
-    confidence += avgMotivation * 1.5;
-    // Garante valores entre 0 e 100
+    // Confiabilidade baseada na diferença e variáveis
+    const diffProb = Math.abs(winA - winB);
+    let confidence = 60 + diffProb * 40; // base 60
+    // Ajuste por fadiga média
+    const avgFatigue = (fatigueA + fatigueB) / 2;
+    confidence -= avgFatigue * 3; // cada ponto reduz 3
+    // Ajuste por motivação
+    const avgMotivation = (motivationA + motivationB) / 2;
+    confidence += (avgMotivation - 5) * 2; // motivo acima da média aumenta
     confidence = Math.max(0, Math.min(100, confidence));
-    // Classificação de confiança
     let confidenceLabel;
     if (confidence >= 81) confidenceLabel = 'Muito Alta';
     else if (confidence >= 61) confidenceLabel = 'Alta';
     else if (confidence >= 41) confidenceLabel = 'Moderada';
     else if (confidence >= 21) confidenceLabel = 'Baixa';
     else confidenceLabel = 'Muito Baixa';
-
     return {
         muA,
         muB,
@@ -258,7 +234,13 @@ function computeAnalysis(data) {
             cleanB
         },
         confidence,
-        confidenceLabel
+        confidenceLabel,
+        fatigueA,
+        fatigueB,
+        motivationA,
+        motivationB,
+        iaaA: data.autoClimate ? (60 + pseudoRandom(teamA + 'climate') * 30) : null,
+        iaaB: data.autoClimate ? (60 + pseudoRandom(teamB + 'climate') * 30) : null
     };
 }
 
@@ -337,59 +319,46 @@ function displayResults(data, results) {
  * Cria o sumário executivo com base nos dados e resultados
  */
 function generateExecutiveSummary(data, results) {
+    // Sumário executivo baseado em métricas automáticas
     const lines = [];
-    // Ataque comparativo
-    if (data.avgGoalsForA > data.avgGoalsForB + 0.2) {
-        lines.push(`${data.teamA} apresenta ataque mais produtivo (média de ${data.avgGoalsForA.toFixed(2)} gols por jogo) do que ${data.teamB} (${data.avgGoalsForB.toFixed(2)}).`);
-    } else if (data.avgGoalsForB > data.avgGoalsForA + 0.2) {
-        lines.push(`${data.teamB} apresenta ataque mais produtivo (média de ${data.avgGoalsForB.toFixed(2)}) comparado a ${data.teamA} (${data.avgGoalsForA.toFixed(2)}).`);
+    // Comparação de expectativas de gols
+    const muDiff = results.muA - results.muB;
+    if (muDiff > 0.3) {
+        lines.push(`${data.teamA} tem expectativa ofensiva superior, com média estimada de ${results.muA.toFixed(2)} gol(s), contra ${results.muB.toFixed(2)} de ${data.teamB}.`);
+    } else if (muDiff < -0.3) {
+        lines.push(`${data.teamB} tem expectativa ofensiva superior, com média estimada de ${results.muB.toFixed(2)} gol(s), contra ${results.muA.toFixed(2)} de ${data.teamA}.`);
     } else {
-        lines.push(`Os ataques de ${data.teamA} e ${data.teamB} possuem médias semelhantes de gols (${data.avgGoalsForA.toFixed(2)} e ${data.avgGoalsForB.toFixed(2)}).`);
+        lines.push(`As expectativas de gols são semelhantes: ${data.teamA} (${results.muA.toFixed(2)}) e ${data.teamB} (${results.muB.toFixed(2)}).`);
     }
-    // Defesa comparativa
-    if (data.avgGoalsAgainstA + 0.2 < data.avgGoalsAgainstB) {
-        lines.push(`A defesa de ${data.teamA} é mais sólida, sofrendo em média ${data.avgGoalsAgainstA.toFixed(2)} gol(s) contra ${data.avgGoalsAgainstB.toFixed(2)} de ${data.teamB}.`);
-    } else if (data.avgGoalsAgainstB + 0.2 < data.avgGoalsAgainstA) {
-        lines.push(`A defesa de ${data.teamB} é mais sólida, sofrendo em média ${data.avgGoalsAgainstB.toFixed(2)} gol(s) contra ${data.avgGoalsAgainstA.toFixed(2)} de ${data.teamA}.`);
-    } else {
-        lines.push(`As defesas apresentam eficiência semelhante, com ${data.teamA} sofrendo ${data.avgGoalsAgainstA.toFixed(2)} e ${data.teamB} ${data.avgGoalsAgainstB.toFixed(2)} gol(s) por jogo.`);
-    }
-    // Classificação de ataque e defesa
-    const cap = str => {
-        return str.replace(/\b(m|f|d|a)([a-z]+)/i, (m, p1, p2) => p1.toUpperCase() + p2);
-    };
-    const atkDescA = cap(data.attackA.replace('-', ' '));
-    const atkDescB = cap(data.attackB.replace('-', ' '));
-    const defDescA = cap(data.defenseA.replace('-', ' '));
-    const defDescB = cap(data.defenseB.replace('-', ' '));
-    lines.push(`Força ofensiva: ${data.teamA} (${atkDescA}) vs ${data.teamB} (${atkDescB}).`);
-    lines.push(`Força defensiva: ${data.teamA} (${defDescA}) vs ${data.teamB} (${defDescB}).`);
-    // Mando de campo
-    if (data.homeTeam === 'A') {
-        lines.push(`O mando de campo é de ${data.teamA}, conferindo ligeira vantagem (estimada em 10%).`);
-    } else {
-        lines.push(`O mando de campo é de ${data.teamB}, conferindo ligeira vantagem (estimada em 10%).`);
-    }
-    // Motivação
-    if (Math.abs(data.motivationA - data.motivationB) >= 3) {
-        const moreMotivated = data.motivationA > data.motivationB ? data.teamA : data.teamB;
-        lines.push(`${moreMotivated} demonstra motivação significativamente maior para a partida.`);
+    // Ambientação/clima (IAA)
+    if (results.iaaA !== null && results.iaaB !== null) {
+        const iaaDiff = results.iaaA - results.iaaB;
+        if (Math.abs(iaaDiff) >= 10) {
+            const advantagedTeam = iaaDiff > 0 ? data.teamA : data.teamB;
+            lines.push(`${advantagedTeam} está mais adaptado ao ambiente (clima, altitude, umidade), o que pode representar vantagem.`);
+        } else {
+            lines.push(`Índices de adaptação ambiental próximos, sem vantagem significativa para ${data.teamA} ou ${data.teamB}.`);
+        }
     }
     // Fadiga
-    if (Math.abs(data.fatigueA - data.fatigueB) >= 3) {
-        const moreFatigued = data.fatigueA > data.fatigueB ? data.teamA : data.teamB;
-        lines.push(`${moreFatigued} chega com fadiga consideravelmente maior, o que pode afetar o rendimento.`);
+    const fatDiff = results.fatigueA - results.fatigueB;
+    if (Math.abs(fatDiff) >= 1.5) {
+        const moreFatiguedTeam = fatDiff > 0 ? data.teamA : data.teamB;
+        lines.push(`${moreFatiguedTeam} apresenta maior fadiga acumulada, fator que pode reduzir performance.`);
     }
-    // Impacto de elenco
-    const impactMapDesc = {
-        'muito-baixo': 'muito baixo',
-        'baixo': 'baixo',
-        'medio': 'médio',
-        'alto': 'alto',
-        'muito-alto': 'muito alto'
-    };
-    if (data.squadA !== 'muito-baixo' || data.squadB !== 'muito-baixo') {
-        lines.push(`Impacto de elenco: ${data.teamA} (${impactMapDesc[data.squadA]}) vs ${data.teamB} (${impactMapDesc[data.squadB]}).`);
+    // Motivação
+    const motDiff = results.motivationA - results.motivationB;
+    if (Math.abs(motDiff) >= 2) {
+        const moreMotivatedTeam = motDiff > 0 ? data.teamA : data.teamB;
+        lines.push(`${moreMotivatedTeam} demonstra motivação superior para a partida.`);
+    }
+    // Comentário sobre equilíbrio de probabilidades
+    const diffProb = Math.abs(results.winA - results.winB);
+    if (diffProb < 0.1) {
+        lines.push('O confronto é bastante equilibrado segundo as probabilidades iniciais.');
+    } else {
+        const favorito = results.winA > results.winB ? data.teamA : data.teamB;
+        lines.push(`${favorito} é ligeiro favorito de acordo com as probabilidades estimadas.`);
     }
     return '<p>' + lines.join('</p><p>') + '</p>';
 }
@@ -398,34 +367,28 @@ function generateExecutiveSummary(data, results) {
  * Define lista de fatores de risco com base nos dados e resultados
  */
 function computeRisks(data, results) {
+    // Avalia fatores de risco com base nas métricas automáticas
     const risks = [];
-    // Fadiga alta
-    if (data.fatigueA > 7) {
+    // Fadiga alta (valores de 0 a 5)
+    if (results.fatigueA >= 4) {
         risks.push(`Alta fadiga para ${data.teamA}`);
     }
-    if (data.fatigueB > 7) {
+    if (results.fatigueB >= 4) {
         risks.push(`Alta fadiga para ${data.teamB}`);
     }
-    // Impacto de elenco
-    if (data.squadA === 'alto' || data.squadA === 'muito-alto') {
-        risks.push(`Lesões/suspensões significativas em ${data.teamA}`);
+    // Diferença de adaptação ao ambiente
+    if (results.iaaA !== null && results.iaaB !== null) {
+        const iaaDiff = Math.abs(results.iaaA - results.iaaB);
+        if (iaaDiff >= 15) {
+            const disadvantaged = results.iaaA < results.iaaB ? data.teamA : data.teamB;
+            risks.push(`Baixa adaptação ambiental para ${disadvantaged}`);
+        }
     }
-    if (data.squadB === 'alto' || data.squadB === 'muito-alto') {
-        risks.push(`Lesões/suspensões significativas em ${data.teamB}`);
-    }
-    // Equilíbrio excessivo
+    // Equilíbrio elevado das probabilidades
     if (Math.abs(results.winA - results.winB) < 0.1) {
         risks.push('Probabilidades muito próximas, alto equilíbrio entre as equipes');
     }
-    // Ataque equilibrado
-    if (data.attackA === data.attackB) {
-        risks.push('Ataques com classificação equivalente, dificultando diferenciação');
-    }
-    // Defesa equilibrada
-    if (data.defenseA === data.defenseB) {
-        risks.push('Defesas com classificação equivalente, aumentando incerteza');
-    }
-    // Baixa confiança geral
+    // Confiabilidade geral baixa
     if (results.confidence < 40) {
         risks.push('Nível de confiança baixo na estimativa final');
     }
@@ -447,7 +410,7 @@ function generateFinalVerdict(data, results, risks) {
     const topScore = results.topScores[0];
     const confidenceScore = Math.round(results.confidence);
     const confidenceLabel = results.confidenceLabel;
-    // Principais justificativas: seleciona as duas primeiras linhas do sumário
+    // Principais justificativas: use as três primeiras linhas do sumário
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = generateExecutiveSummary(data, results);
     const paragraphs = Array.from(tempDiv.querySelectorAll('p')).map(p => p.textContent);
